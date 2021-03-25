@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	"log"
 	"math/rand"
@@ -12,9 +13,9 @@ import (
 
 type User struct {
 	gorm.Model
-	Name string `gorm:"type:varchar(20);not null"`
-	Telephone string `gorm:"type:varchar(110);not null;unique"`
-	Password string `gorm:"type:size:255;not null"`
+	Name      string `gorm:"type:varchar(20);not null"`
+	Telephone string `gorm:"type:varchar(11);not null;unique"`
+	Password  string `gorm:"size:255;not null"`
 }
 
 func main() {
@@ -23,7 +24,7 @@ func main() {
 
 	r := gin.Default()
 	r.POST("/api/auth/register", func(ctx *gin.Context) {
-		name:= ctx.PostForm("name")
+		name := ctx.PostForm("name")
 		telephone := ctx.PostForm("telephone")
 		password := ctx.PostForm("password")
 
@@ -48,10 +49,10 @@ func main() {
 			return
 		}
 
-		newUser := User {
-			Name: name,
+		newUser := User{
+			Name:      name,
 			Telephone: telephone,
-			Password: password,
+			Password:  password,
 		}
 		db.Create(&newUser)
 
@@ -83,7 +84,7 @@ func RandomString(n int) string {
 	return string(result)
 }
 
-func InitDB() *gorm.DB  {
+func InitDB() *gorm.DB {
 	driverName := "mysql"
 	host := "localhost"
 	port := "3306"
@@ -99,7 +100,7 @@ func InitDB() *gorm.DB  {
 		database,
 		charset)
 
-	db,err := gorm.Open(driverName, args)
+	db, err := gorm.Open(driverName, args)
 	if err != nil {
 		panic("failed to connection database, err: " + err.Error())
 	}
